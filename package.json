@@ -1,0 +1,21 @@
+{
+	"name": "collada_sample",
+	"description": "An example project skeleton",
+	"homepage": "http://example.org",
+	"copyright": "Copyright © 2000, Your Name",
+	"authors": [
+		"Your Name"
+	],
+	"dependencies": {
+        "derelict": "~master",
+        "gl3n": "~master"
+	},
+    "stringImportPaths": [
+        "./source/AppearanceMiku"
+    ],
+    "sourcePaths": [
+        "./source",
+        "import/adjustxml",
+        "import/collada"
+    ]
+}
