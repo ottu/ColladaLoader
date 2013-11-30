@@ -186,9 +186,6 @@ void main( string[] args )
     glLoadIdentity();
     glLoadMatrixf( flat( mat4.look_at( vec3( 0.0, 10.0, 30.0 ), vec3( 0.0, 0.0, 0.0 ), vec3( 0.0, 1.0, 0.0 ) ) ).ptr );
     
-    //gluPerspective( 37.8493, 1.0, 10.0, 1000.0 );
-	//gluLookAt( 0.0,10.0,30.0, 0.0,0.0,0.0, 0.0,1.0,0.0 );
-
 	float[4] pos = [0.0, 0.0, 10.0, 0.0];
 	glLightfv(GL_LIGHT0, GL_POSITION, pos.ptr);
 	glEnable(GL_LIGHTING);
@@ -199,7 +196,10 @@ void main( string[] args )
 
     glfwMakeContextCurrent( g_Window);
     DerelictGL3.reload();
-    
+
+	double prevTime = glfwGetTime();
+	int count = 0;
+
     writeln("start main loop.");
 	
     //while( glfwGetWindowAttrib( g_Window, GLFW_FOCUSED ) )
@@ -213,10 +213,9 @@ void main( string[] args )
 			count = 0;
 		}
 
-	    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		glEnable(GL_DEPTH_TEST);
-/+	
+/+
 		glLineWidth( 2 );
 		
 		glPushMatrix();
@@ -277,7 +276,7 @@ void main( string[] args )
         model.drawBone();
 		
 		glDisable(GL_DEPTH_TEST);
-		
+
 		glfwSwapBuffers( g_Window );
         glfwPollEvents();
 	}
