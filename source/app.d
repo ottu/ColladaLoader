@@ -15,6 +15,8 @@ import derelict.opengl3.gl;
 import derelict.opengl3.gl3;
 import derelict.glfw3.glfw3;
 
+import gl3n.linalg;
+
 import derelict.devil.il;
 import derelict.devil.ilu;
 import derelict.devil.ilut;
@@ -29,8 +31,8 @@ GLFWwindow* g_Window = null;
 extern (System)
 {
 void KeyFunc( GLFWwindow* window, int key, int scancode, int action, int mods ){ 
-	writeln( "call keycallbackfunc" );
-	writeln( key, " ", action );
+	//writeln( "call keycallbackfunc" );
+	//writeln( key, " ", action );
 	
 	switch( key )
 	{
@@ -88,55 +90,11 @@ void CursorPosFunc( GLFWwindow* window, double xpos, double ypos ) {
 static int wpos = 0;
 static int cscale = 0;
 void ScrollFunc( GLFWwindow* window, double xoffset, double yoffset ) { 
-	writeln( "call MouseWheelFunc" );
-	writefln( "xoffset = %s, yoffset = %s", xoffset, yoffset );
-/+	
-	if( pos > wpos )
-	{
-		cscale = min( cscale+1, 10 );
-		
-	}
-	else if( pos < wpos )
-	{
-		cscale = max( cscale-1, -10 );
-	}
-+/	
-/+
-	if( pos > wpos )
-	{
-		if( ( -10 <= cscale ) && ( cscale < 0 ) )
-		{
-			glPopMatrix();
-			cscale++;
-		}
-		else if( ( 0 <= cscale ) && ( cscale < 10 ) )
-		{
-			glPushMatrix();
-			glScalef( 1.1, 1.1, 1.1 );
-			cscale = min( cscale+1, 10 );
-		}
-	}
-	else if( pos < wpos )
-	{
-		if( ( -10 < cscale ) && ( cscale <= 0 ) )
-		{
-			glPushMatrix();
-			glScalef( 0.9, 0.9, 0.9 );
-			cscale = max( cscale-1, -10 );
-		}
-		else if( ( 0 < cscale ) && ( cscale <= 10 ) )
-		{
-			glPopMatrix();
-			cscale--;
-		}
-	}
-	else
-	{
-	
-	}
-	
-	wpos = pos;
-+/
+	//writeln( "call MouseWheelFunc" );
+	//writefln( "xoffset = %s, yoffset = %s", xoffset, yoffset );
+
+    auto y = 1 + ( yoffset * 0.3 );
+    glScalef( y, y, y );
 } 
 
 void WindowSizeFunc( GLFWwindow* window, int width, int height ) { 
@@ -158,6 +116,9 @@ void main( string[] args )
     writeln("gl load...");
     DerelictGL.load();
 
+    writeln("gl3 load...");
+    DerelictGL3.load();
+
     writeln("glfw load...");
     DerelictGLFW3.load();
 	
@@ -173,13 +134,6 @@ void main( string[] args )
         glfwTerminate();
     }
     
-	//if( !glfwOpenWindow( 0, 0, 0, 0, 0, 0, 8, 0, GLFW_WINDOW ) )
-	//{
-	//	writeln("Open window faild.");
-	//	return;
-	//}
-    
-
     writeln("open new window...");
     g_Window = glfwCreateWindow( 640, 480, "test".toStringz, null, null );
 
@@ -222,21 +176,30 @@ void main( string[] args )
 	
 	auto model = ColladaModel( collada, "/Users/hayato/Programming/D/project/ColladaLoader/AppearanceMiku" );
 
-	//glMatrixMode( GL_PROJECTION );
-	//glLoadIdentity;	
-	//gluPerspective( 37.8493, 1.0, 10.0, 1000.0 );
+    ref auto flat( mat4 m ) { return m[0] ~ m[1] ~ m[2] ~ m[3]; }
+
+	glMatrixMode( GL_PROJECTION );
+	glLoadIdentity();
+    glLoadMatrixf( flat( mat4.perspective( 640, 480, 45.0, 0.1, 100.0 ) ).ptr );
+    
+	glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
+    glLoadMatrixf( flat( mat4.look_at( vec3( 0.0, 10.0, 30.0 ), vec3( 0.0, 0.0, 0.0 ), vec3( 0.0, 1.0, 0.0 ) ) ).ptr );
+    
+    //gluPerspective( 37.8493, 1.0, 10.0, 1000.0 );
 	//gluLookAt( 0.0,10.0,30.0, 0.0,0.0,0.0, 0.0,1.0,0.0 );
-	
-	//float[4] pos = [0.0, 0.0, 10.0, 0.0];
-	//glLightfv(GL_LIGHT0, GL_POSITION, pos.ptr);
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
+
+	float[4] pos = [0.0, 0.0, 10.0, 0.0];
+	glLightfv(GL_LIGHT0, GL_POSITION, pos.ptr);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 
 	double prevTime = glfwGetTime();
 	int count = 0;
-	
-	//glMatrixMode( GL_MODELVIEW );
 
+    glfwMakeContextCurrent( g_Window);
+    DerelictGL3.reload();
+    
     writeln("start main loop.");
 	
     //while( glfwGetWindowAttrib( g_Window, GLFW_FOCUSED ) )
@@ -249,10 +212,11 @@ void main( string[] args )
             prevTime = glfwGetTime();
 			count = 0;
 		}
-/+		
+
+	    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		glEnable(GL_DEPTH_TEST);
-/+		
+/+	
 		glLineWidth( 2 );
 		
 		glPushMatrix();
@@ -279,6 +243,7 @@ void main( string[] args )
 		glColor3f( 1, 1, 1 );
 		glLineWidth( 1 );
 +/
+
 		if( glfwGetKey( g_Window, 84/+t+/ ) )
 			model.enableTexture = !(model.enableTexture);
 		
@@ -289,8 +254,8 @@ void main( string[] args )
 		{
             model.selectAnimation( 0 );
 			model.move();
-			//model.draw();
-            //model.drawBone();
+			model.draw();
+            model.drawBone();
 			model.suspend();
 			Thread.sleep( dur!("msecs")( 100 ) ); //0.5 sec
 		}
@@ -312,7 +277,7 @@ void main( string[] args )
         model.drawBone();
 		
 		glDisable(GL_DEPTH_TEST);
-+/		
+		
 		glfwSwapBuffers( g_Window );
         glfwPollEvents();
 	}

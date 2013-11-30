@@ -1,6 +1,3 @@
 [submodule "import/adjustxml"]
 	path = import/adjustxml
 	url = https://github.com/ottu/adjustxml.git
-[submodule "import/collada"]
-	path = import/collada
-	url = git@github.com:ottu/collada.git
