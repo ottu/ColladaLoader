@@ -191,9 +191,6 @@ void main( string[] args )
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 
-	double prevTime = glfwGetTime();
-	int count = 0;
-
     glfwMakeContextCurrent( g_Window);
     DerelictGL3.reload();
 

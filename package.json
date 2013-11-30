@@ -1,10 +1,10 @@
 {
-	"name": "collada_sample",
-	"description": "An example project skeleton",
-	"homepage": "http://example.org",
-	"copyright": "Copyright © 2000, Your Name",
+	"name": "main",
+	"description": "MMD collada loader sample",
+	"homepage": "http://twitter.com/ottu",
+	"copyright": "Copyright © 2013, ottu",
 	"authors": [
-		"Your Name"
+		"ottu"
 	],
 	"dependencies": {
         "derelict": "~master",
