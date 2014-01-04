@@ -1,5 +1,3 @@
-import adjustxml;
-
 import std.stdio;
 import std.file;
 import std.conv;
@@ -8,9 +6,6 @@ import std.algorithm;
 import std.string;
 import core.thread;
 
-//import opengl.gl;
-//import opengl.glu;
-//import opengl.glfw;
 import derelict.opengl3.gl;
 import derelict.opengl3.gl3;
 import derelict.glfw3.glfw3;
@@ -23,8 +18,6 @@ import derelict.devil.ilut;
 
 import collada.collada;
 import collada.model;
-
-//static XMLDocument doc = parseXML( import("multimtl_triangulate.dae") );
 
 GLFWwindow* g_Window = null;
 
@@ -133,7 +126,7 @@ void main( string[] args )
         writeln("glfw terminate...");
         glfwTerminate();
     }
-    
+
     writeln("open new window...");
     g_Window = glfwCreateWindow( 640, 480, "test".toStringz, null, null );
 
@@ -169,12 +162,7 @@ void main( string[] args )
     writeln("ilu initialize...");
 	iluInit();
 
-	XMLDocument doc = parseXML( import("AppearanceMikuA.dae") );
-	
-	Collada collada = new Collada;
-	collada.load( doc.root );
-	
-	auto model = ColladaModel( collada, "/Users/hayato/Programming/D/project/ColladaLoader/AppearanceMiku" );
+	auto model = ColladaModel( "/Users/hayato/Programming/D/project/ColladaLoader/public/AppearanceMiku" );
 
     ref auto flat( mat4 m ) { return m[0] ~ m[1] ~ m[2] ~ m[3]; }
 
@@ -190,8 +178,8 @@ void main( string[] args )
 	glLightfv(GL_LIGHT0, GL_POSITION, pos.ptr);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-
-    glfwMakeContextCurrent( g_Window);
+    
+    glfwMakeContextCurrent( g_Window );
     DerelictGL3.reload();
 
 	double prevTime = glfwGetTime();
@@ -212,7 +200,7 @@ void main( string[] args )
 
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		glEnable(GL_DEPTH_TEST);
-/+
+
 		glLineWidth( 2 );
 		
 		glPushMatrix();
@@ -238,7 +226,7 @@ void main( string[] args )
 		
 		glColor3f( 1, 1, 1 );
 		glLineWidth( 1 );
-+/
+
 
 		if( glfwGetKey( g_Window, 84/+t+/ ) )
 			model.enableTexture = !(model.enableTexture);
