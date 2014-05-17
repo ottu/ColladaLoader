@@ -1,5 +1,5 @@
 {
-	"name": "main",
+	"name": "ColladaLoader",
 	"description": "MMD collada loader sample",
 	"homepage": "http://twitter.com/ottu",
 	"copyright": "Copyright © 2013, ottu",
@@ -8,14 +8,14 @@
 	],
 	"dependencies": {
         "derelict": "~master",
-        "gl3n": "~master"
+        "gl3n": "~master",
+        "kxml":"~master",
 	},
     "stringImportPaths": [
-        "./source/AppearanceMiku"
+        "./public/AppearanceMiku"
     ],
     "sourcePaths": [
         "./source",
-        "import/adjustxml",
-        "import/collada"
+        "./import/collada/import"
     ]
 }
