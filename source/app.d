@@ -102,21 +102,6 @@ void WindowRefreshFunc( GLFWwindow* window ) {
 
 void main( string[] args )
 {
-    writeln("gl load...");
-    DerelictGL.load();
-    scope(exit) DerelictGL.unload();
-
-    writeln("gl3 load...");
-    DerelictGL3.load();
-    scope(exit) DerelictGL3.unload();
-
-    writeln("glfw load...");
-    DerelictGLFW3.load();
-    scope(exit) DerelictGLFW3.unload();
-
-    writeln("freeimage load...");
-    DerelictFI.load();
-    scope(exit) DerelictFI.unload();
 	
     writeln("glfw initialize...");
 	if( !glfwInit() )
@@ -190,7 +175,6 @@ void main( string[] args )
 
     writeln("start main loop.");
 	
-    //while( glfwGetWindowAttrib( g_Window, GLFW_FOCUSED ) )
     while( !glfwWindowShouldClose( g_Window ) )
 	{
 		count++;
