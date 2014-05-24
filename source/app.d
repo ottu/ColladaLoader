@@ -9,17 +9,11 @@ import core.thread;
 import derelict.opengl3.gl;
 import derelict.opengl3.gl3;
 import derelict.glfw3.glfw3;
-
 import derelict.freeimage.freeimage;
 
 import gl3n.linalg;
 
-//import derelict.devil.il;
-//import derelict.devil.ilu;
-//import derelict.devil.ilut;
-
 import collada.collada;
-//import collada.model;
 
 GLFWwindow* g_Window = null;
 
@@ -110,15 +104,19 @@ void main( string[] args )
 {
     writeln("gl load...");
     DerelictGL.load();
+    scope(exit) DerelictGL.unload();
 
     writeln("gl3 load...");
     DerelictGL3.load();
+    scope(exit) DerelictGL3.unload();
 
     writeln("glfw load...");
     DerelictGLFW3.load();
+    scope(exit) DerelictGLFW3.unload();
 
     writeln("freeimage load...");
     DerelictFI.load();
+    scope(exit) DerelictFI.unload();
 	
     writeln("glfw initialize...");
 	if( !glfwInit() )
@@ -155,18 +153,6 @@ void main( string[] args )
 	glfwSetWindowCloseCallback( g_Window, &WindowCloseFunc ); 
 	glfwSetWindowRefreshCallback( g_Window, &WindowRefreshFunc ); 
 	
-//	writeln("il load...");
-//	DerelictIL.load();
-
-//    writeln("il initialize...");
-//	ilInit();
-	
-//	writeln("ilu load...");
-//	DerelictILU.load();
-
-//    writeln("ilu initialize...");
-//	iluInit();
-    
     ref auto flat( mat4 m ) { return m[0] ~ m[1] ~ m[2] ~ m[3]; }
 
 	glMatrixMode( GL_PROJECTION );
@@ -188,7 +174,19 @@ void main( string[] args )
 	double prevTime = glfwGetTime();
 	int count = 0;
 
-	auto model = ColladaModel( "/Users/hayato/Programming/D/project/ColladaLoader/public/AppearanceMiku" );
+    //
+    // MMD Model Loadding
+    //
+    string modelPath = readModelPath();
+    if( modelPath.empty ) {
+        writeln( "model not loaded." );
+        return;
+    }
+
+	auto model = ColladaModel( modelPath );
+    //
+    // MMD Model Loaded.
+    //
 
     writeln("start main loop.");
 	
@@ -232,7 +230,6 @@ void main( string[] args )
 		glColor3f( 1, 1, 1 );
 		glLineWidth( 1 );
 
-
 		if( glfwGetKey( g_Window, 84/+t+/ ) )
 			model.enableTexture = !(model.enableTexture);
 		
@@ -260,9 +257,9 @@ void main( string[] args )
 
         if( glfwGetKey( g_Window, 76/+l+/ ) )
             model.moveStep( Step.NEXT, 0.001 );
-	    
+
         model.move();
-		model.draw();
+        model.draw();
         model.drawBone();
 
 		glDisable(GL_DEPTH_TEST);
