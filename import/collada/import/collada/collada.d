@@ -31,18 +31,18 @@ class Collada
 {
     XmlNode _self;
 
-	//asset
-	LibraryAnimations   libAnimations;
-	LibraryCameras      libCameras;
-	LibraryControllers  libControllers;
-	LibraryEffects      libEffects;
-	LibraryGeometries   libGeometries;
-	LibraryImages       libImages;
-	LibraryLights       libLights;
-	LibraryMaterials    libMaterials;
-	LibraryVisualScenes libVisualScenes;
-	//[] extra
-	
+    //asset
+    LibraryAnimations   libAnimations;
+    LibraryCameras      libCameras;
+    LibraryControllers  libControllers;
+    LibraryEffects      libEffects;
+    LibraryGeometries   libGeometries;
+    LibraryImages       libImages;
+    LibraryLights       libLights;
+    LibraryMaterials    libMaterials;
+    LibraryVisualScenes libVisualScenes;
+    //[] extra
+
     this( string filePath )
     {
         XmlDocument doc = XmlDocument( readText( filePath ) );
@@ -60,18 +60,18 @@ class Collada
         mixin( Gen( "libLights",       "library_lights" ) );
         mixin( Gen( "libMaterials",    "library_materials" ) );
         mixin( Gen( "libVisualScenes", "library_visual_scenes" ) );
-    }	
-	
+    }
+
     ~this() { }
 
 }
 
 unittest
 {
-	writeln("----- collada.Collada unittest -----");
-	//Collada collada = new Collada;
-	//collada.load( parseXML( import("multimtl_triangulate.dae") ).root );
-	//collada.load( parseXML( import("Appearance_Miku.dae") ).root );
-	
-	writeln("----- Collada done -----");
+    writeln("----- collada.Collada unittest -----");
+    //Collada collada = new Collada;
+    //collada.load( parseXML( import("multimtl_triangulate.dae") ).root );
+    //collada.load( parseXML( import("Appearance_Miku.dae") ).root );
+
+    writeln("----- Collada done -----");
 }
