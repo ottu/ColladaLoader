@@ -146,15 +146,13 @@ void main( string[] args )
     glfwSetWindowCloseCallback( g_Window, &WindowCloseFunc );
     glfwSetWindowRefreshCallback( g_Window, &WindowRefreshFunc );
 
-    ref auto flat( mat4 m ) { return m[0] ~ m[1] ~ m[2] ~ m[3]; }
-
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-    glLoadMatrixf( flat( mat4.perspective( 640, 480, 45.0, 0.1, 100.0 ) ).ptr );
+    glLoadMatrixf( mat4.perspective( 640, 480, 45.0, 0.1, 100.0 ).value_ptr );
 
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
-    glLoadMatrixf( flat( mat4.look_at( vec3( 0.0, 10.0, 30.0 ), vec3( 0.0, 0.0, 0.0 ), vec3( 0.0, 1.0, 0.0 ) ) ).ptr );
+    glLoadMatrixf( mat4.look_at( vec3( 0.0, 10.0, 30.0 ), vec3( 0.0, 0.0, 0.0 ), vec3( 0.0, 1.0, 0.0 ) ).value_ptr );
 
     float[4] pos = [0.0, 0.0, 10.0, 0.0];
     glLightfv(GL_LIGHT0, GL_POSITION, pos.ptr);
