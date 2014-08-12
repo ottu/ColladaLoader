@@ -65,7 +65,7 @@ void multr( ref float[4] v, ref const mat4 mat )
     float v3 = v[3];
 
     auto m = mat.matrix;
-    
+
     //v[0] = v0*m[0][0] + v1*m[1][0] + v2*m[2][0] + v3*m[3][0];
     //v[1] = v0*m[0][1] + v1*m[1][1] + v2*m[2][1] + v3*m[3][1];
     //v[2] = v0*m[0][2] + v1*m[1][2] + v2*m[2][2] + v3*m[3][2];
@@ -89,12 +89,12 @@ struct WrappedSource(T) if ( isPermitted!T )
     Source _self;
 
     string id;
-    
+
     struct InnerArray
     {
         string aid;
         T[] _init;
-        
+
         this(TypeArray!T typeArray)
         {
             aid = typeArray.id;
@@ -102,8 +102,8 @@ struct WrappedSource(T) if ( isPermitted!T )
         }
     }
     InnerArray _array;
-    
-    
+
+
     struct BW
     {
         WrappedBone* _bone;
@@ -113,7 +113,7 @@ struct WrappedSource(T) if ( isPermitted!T )
     {
         T[] _value;
         T[] _writeValue;
-        
+
         T*[][] _triRefs;
         BW[] _bwRefs;
 
@@ -130,7 +130,7 @@ struct WrappedSource(T) if ( isPermitted!T )
             __vertex[2] = 0.0;
             __vertex[3] = 0.0;
             //__vertex = vec4( 0.0, 0.0, 0.0, 0.0 );
-            
+
             for( int i = 0; i < _bwRefs.length; ++i )
             {
                 __v[0] = _value[0];
@@ -143,7 +143,7 @@ struct WrappedSource(T) if ( isPermitted!T )
                 multr( __v, _bwRefs[i]._bone.pose );
                 //__v = __v * _bwRefs[i]._bone.matrix;
                 //__v = __v * _bwRefs[i]._bone.pose;
-                
+
                 auto p = _bwRefs[i]._bone.parent;
                 while( p != null )
                 {
@@ -158,16 +158,16 @@ struct WrappedSource(T) if ( isPermitted!T )
                 //__v.x = __v.x * _bwRefs[i]._weight;
                 //__v.y = __v.y * _bwRefs[i]._weight;
                 //__v.z = __v.z * _bwRefs[i]._weight;
-                
+
                 __vertex[0] = __vertex[0] + __v[0];
                 __vertex[1] = __vertex[1] + __v[1];
                 __vertex[2] = __vertex[2] + __v[2];
                 //__vertex.x = __vertex.x + __v.x;
                 //__vertex.y = __vertex.y + __v.y;
                 //__vertex.z = __vertex.z + __v.z;
-                
+
             }
-            
+
             for( int j = 0; j < _triRefs.length; ++j )
             {
                 *(_triRefs[j][0]) = __vertex[0];
@@ -177,13 +177,13 @@ struct WrappedSource(T) if ( isPermitted!T )
                 //*(_triRefs[j][1]) = __vertex.y;
                 //*(_triRefs[j][2]) = __vertex.z;
             }
-            
+
         }
-        
+
         }
     }
     InnerParam[] _accessor;
-    
+
     static if( is( T == float ) )
     void calc()
     {
@@ -218,9 +218,9 @@ struct WrappedSource(T) if ( isPermitted!T )
         }
         else static if( true )
         {
-            throw new Exception("dame!"); 
+            throw new Exception("dame!");
         }
-        
+
         _accessor.length = _self.common.accessor.count;
         uint stride = _self.common.accessor.stride;
         for( int i = 0; i < _self.common.accessor.count; ++i )
@@ -229,7 +229,7 @@ struct WrappedSource(T) if ( isPermitted!T )
             uint end   = start+stride;
             _accessor[i]._value = _array._init[ start..end ];
         }
-        
+
     }
 }
 
@@ -253,13 +253,13 @@ unittest
           </technique_common>
         </source>
     }.readDocument.getChildren[0] );
-    
+
     auto wSource = source.wrapSource!float;
     assert( wSource._array._init == [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] );
     assert( wSource._accessor[0]._value == [1,2,3] );
     assert( wSource._accessor[1]._value == [4,5,6] );
     assert( wSource._accessor[2]._value == [7,8,9] );
-        
+
 }
 
 struct WrappedInputB(T) if ( is(T==float) || is(T==int) || is(T==bool) )
@@ -275,15 +275,15 @@ struct WrappedInputB(T) if ( is(T==float) || is(T==int) || is(T==bool) )
         assert( input.source[1..$] == wsource.id );
 
         _self = input;
-        
+
         foreach( i; indices )
             _init ~= wsource._accessor[i]._value;
-        
+
         _values = _init.dup;
-        
+
         int count = 0;
         foreach( i; indices )
-            wsource._accessor[i]._triRefs ~= _self.semantic == SEMANTICTYPE.TEXCOORD 
+            wsource._accessor[i]._triRefs ~= _self.semantic == SEMANTICTYPE.TEXCOORD
                                             ? [ &(_values[count++]), &(_values[count++]) ]
                                             : [ &(_values[count++]), &(_values[count++]), &(_values[count++]) ];
 
@@ -297,7 +297,7 @@ struct WrappedInputB(T) if ( is(T==float) || is(T==int) || is(T==bool) )
     }
 }
 
-auto wrapInputB(T)( InputB input, uint[] indexes, WrappedSource!(T)* wsource ) 
+auto wrapInputB(T)( InputB input, uint[] indexes, WrappedSource!(T)* wsource )
                 if ( is(T==float) || is(T==int) || is(T==bool) )
 {
     return WrappedInputB!T( input, indexes, wsource );
@@ -316,10 +316,10 @@ struct WrappedTriangles(T) if ( is(T==float) || is(T==int) )
 
         uint[][] indices;
         indices.length = _self.inputs.length;
-        
+
         foreach( i, index; _self.p )
             indices[ i % _self.inputs.length ] ~= index;
-        
+
         foreach( input; _self.inputs )
             _inputs ~= wrapInputB!T( input, indices[input.offset],
                                     &(filter!( (ref wsource) => input.source[1..$] == wsource.id )
@@ -336,7 +336,7 @@ struct WrappedTriangles(T) if ( is(T==float) || is(T==int) )
             glPolygonMode( GL_FRONT, GL_FILL );
         else
             glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-        
+
         glEnableClientState( GL_VERTEX_ARRAY );
         glEnableClientState( GL_NORMAL_ARRAY );
         glEnableClientState( GL_TEXTURE_COORD_ARRAY );
@@ -344,7 +344,7 @@ struct WrappedTriangles(T) if ( is(T==float) || is(T==int) )
         glVertexPointer( 3, GL_FLOAT, 0, _inputs[0]._values.ptr );
         glNormalPointer( GL_FLOAT, 0, _inputs[1]._values.ptr );
         glTexCoordPointer( 2, GL_FLOAT, 0, _inputs[2]._values.ptr );
-        
+
         glDrawArrays( GL_TRIANGLES, 0, 3*_self.count );
 
         glDisableClientState( GL_TEXTURE_COORD_ARRAY );
@@ -374,9 +374,9 @@ unittest
           </technique_common>
         </source>
     }.readDocument.getChildren[0] );
-    
+
     auto wSource = source.wrapSource!float;
-    
+
     WrappedSource!(float)[] wSources;
     wSources ~= wSource;
 
@@ -387,33 +387,33 @@ unittest
           <p> 0 3 4 4 1 0 1 4 5 </p>
         </triangles>
     }.readDocument.getChildren[0] );
-    
+
     auto wTri = tri.wrapTriangles!float( wSources );
-/*    
+/*
     assert( wTri._inputs[0]._init == [  0, 1, 2,  9,10,11, 12,13,14,
                                        12,13,14,  3, 4, 5,  0, 1, 2,
                                         3, 4, 5, 12,13,14, 15,16,17 ] );
     assert( wTri._inputs[0]._values == [  0, 1, 2,  9,10,11, 12,13,14,
                                          12,13,14,  3, 4, 5,  0, 1, 2,
                                           3, 4, 5, 12,13,14, 15,16,17 ] );
-*/    
+*/
 }
 
 struct WrappedMesh(T) if ( is(T==float) || is(T==int) )
 {
     Mesh _self;
-    
+
     WrappedSource!(T)[]    _wsources;
     WrappedSource!(T)*     _vertices;
     WrappedTriangles!(T)[] _wtriangles;
     alias _wtriangles this;
-    
+
     this( Mesh mesh )
     {
         writeln( "Mesh loading..." );
-    
+
         _self = mesh;
-        
+
         auto wss = _self.sources.map!( (a) => a.wrapSource!T ).array;
         foreach( ref ws; wss )
         {
@@ -421,11 +421,11 @@ struct WrappedMesh(T) if ( is(T==float) || is(T==int) )
             ws.id = _self.vertices.id;
             _vertices = &ws;
         }
-        
+
         _wsources = wss;
-        
+
         _wtriangles = _self.triangles.map!( (a) => a.wrapTriangles!T( _wsources ) ).array;
-        
+
         writeln( "done!" );
     }
 }
@@ -438,16 +438,16 @@ auto wrapMesh(T)( Mesh mesh ) if ( is(T==float) || is(T==int) )
 struct WrappedGeometry
 {
     Geometry _self;
-    
+
     string id;
     WrappedMesh!float mesh;
-    
+
     this( Geometry geometry )
     {
         _self = geometry;
-        
+
         id = geometry.id;
-        
+
         assert( geometry.type == GEOMETRYTYPE.MESH );
         mesh = geometry.mesh.wrapMesh!float;
     }
@@ -461,14 +461,14 @@ auto wrapGeometry( Geometry geometry )
 struct WrappedGeometries
 {
     LibraryGeometries _self;
-    
+
     WrappedGeometry[] _geometries;
     alias _geometries this;
-    
+
     this( LibraryGeometries libGeometries )
     {
         _self = libGeometries;
-        
+
         _geometries = array( map!( (a) => a.wrapGeometry )( libGeometries.geometries ) );
     }
 }
@@ -559,15 +559,15 @@ struct WrappedImages
     LibraryImages _self;
     WrappedImage[] _images;
     alias _images this;
-    
+
     this( LibraryImages libImages, string path = "" )
     {
         writeln("Images loading...");
-        
+
         _self = libImages;
-        
+
         _images = array( map!( (a) => a.wrapImage( path ) )( libImages.images ) );
-        
+
         writeln("done!");
     }
 }
@@ -588,54 +588,54 @@ struct WrappedEffect
     float    _shininess;
     //diffuse type
     COLORTEXTURETYPE type;
-    
+
     //type == COLOR
     float[4] _color;
-    
+
     //type == TEXTURE
-    //string texcoord    
+    //string texcoord
     int _minfilter;
     int _magfilter;
-    //source    
+    //source
     int _format;
     WrappedImage* _initFrom;
 
     this( Effect effect, WrappedImages* wimages )
     {
-        
+
         _self = effect;
-        
+
         id = effect.id;
-        
+
         assert( _self.profiles[0].type == PROFILETYPE.COMMON );
         assert( _self.profiles[0].common.technique.type == SHADERELEMENTTYPE.PHONG );
-        
-        Phong phong = _self.profiles[0].common.technique.phong;        
+
+        Phong phong = _self.profiles[0].common.technique.phong;
         _ambient   = phong.ambient.color;
         _specular  = phong.specular.color;
         _shininess = phong.shininess.float_[0];
-        
+
         type = phong.diffuse.type;
-        
+
         if( type == COLORTEXTURETYPE.TEXTURE )
         {
             //assert( phong.diffuse.type == COLORTEXTURETYPE.TEXTURE );
-            
+
             NewParamCOMMON sampler = array( filter!( (a) => a.sid == phong.diffuse.texture.texture )( _self.profiles[0].common.newparams ) )[0];
-            
+
             assert( sampler.type == NEWPARAMTYPE.SAMPLER2D );
             assert( sampler.sampler2d.minfilter == "LINEAR_MIPMAP_LINEAR" );
             _minfilter = GL_LINEAR_MIPMAP_LINEAR;
             assert( sampler.sampler2d.magfilter == "LINEAR" );
             _magfilter = GL_LINEAR;
-            
+
             NewParamCOMMON surface = array( filter!( (a) => a.sid == sampler.sampler2d.source )( _self.profiles[0].common.newparams ) )[0];
-            
+
             assert( surface.type == NEWPARAMTYPE.SURFACE );
             assert( surface.surface.type == SURFACETYPE.TWOD );
             assert( surface.surface.format == "A8R8G8B8" );
             _format = GL_RGBA8;
-            
+
             _initFrom = &( array( filter!( (ref a) => a.id == surface.surface.initFrom )( (*wimages)[] ) )[0] );
             assert( _initFrom._self.type == IMAGETYPE.INITFROM );
 
@@ -660,7 +660,7 @@ struct WrappedEffect
                 _initFrom.bind;
             else if( type == COLORTEXTURETYPE.COLOR )
                 glMaterialfv( GL_FRONT, GL_DIFFUSE, _color.ptr );
-                
+
             glMaterialfv( GL_FRONT, GL_AMBIENT,  _ambient.ptr );
             glMaterialfv( GL_FRONT, GL_SPECULAR, _specular.ptr );
             glMaterialf( GL_FRONT, GL_SHININESS, _shininess );
@@ -670,7 +670,7 @@ struct WrappedEffect
             static float[4] defAmb = [ 0.2, 0.2, 0.2, 1.0 ];
             static float[4] defSpc = [ 0.0, 0.0, 0.0, 1.0 ];
             static float    defShn = 0.0;
-        
+
             glMaterialfv( GL_FRONT, GL_AMBIENT,  defAmb.ptr );
             glMaterialfv( GL_FRONT, GL_SPECULAR, defSpc.ptr );
             glMaterialf( GL_FRONT, GL_SHININESS, defShn );
@@ -689,15 +689,15 @@ struct WrappedEffects
     LibraryEffects _self;
     WrappedEffect[] _effects;
     alias _effects this;
-    
+
     this( LibraryEffects libEffects, WrappedImages* wimages )
     {
         writeln( "Effects loading..." );
-    
+
         _self = libEffects;
-        
+
         _effects = array( map!( (a) => a.wrapEffect( wimages ) )( libEffects.effects ) );
-        
+
         writeln( "done!" );
     }
 }
@@ -713,17 +713,17 @@ struct WrappedMaterial
     string id;
     WrappedEffect* _instance;
     alias _instance this;
-    
+
     this( Material material, WrappedEffects* weffects )
     {
         _self = material;
-        
+
         id        = material.id;
         _instance = &( array( filter!( (ref a) => _self.effect.url[1..$] == a.id )( (*weffects)[] ) )[0] );
-        
+
         writefln( "Material [%s] loaded!", _self.id );
     }
-    
+
 }
 
 auto wrapMaterial( Material material, WrappedEffects* weffects )
@@ -736,15 +736,15 @@ struct WrappedMaterials
     LibraryMaterials _self;
     WrappedMaterial[] _materials;
     alias _materials this;
-    
+
     this( LibraryMaterials libMaterials, WrappedEffects* weffects )
     {
         writeln( "Materials loading..." );
-    
+
         _self = libMaterials;
-        
+
         _materials = array( map!( (a) => a.wrapMaterial( weffects ) )( libMaterials.materials ) );
-        
+
         writeln( "done!" );
     }
 }
@@ -762,11 +762,11 @@ struct WrappedVertexWeights
     this( VertexWeights vw )
     {
         assert( vw.count == vw.vcount.length );
-        
+
         int[][] bw;
         bw.length = 1;
         bw = reduce!( (a, b){ if(a[$-1].length < 2) a[$-1] ~= b; else a ~= [b]; return a; } )( bw, vw.v );
-        
+
         foreach( count; vw.vcount )
         {
             int[2][] v;
@@ -777,7 +777,7 @@ struct WrappedVertexWeights
             }
             _values ~= v;
         }
-        
+
         assert( vw.count == _values.length );
     }
 }
@@ -802,14 +802,14 @@ unittest
           </technique_common>
         </source>
     }.readDocument.getChildren[0] );
-    
+
     auto wSource = source.wrapSource!float;
     assert( wSource._accessor.length == 9 );
     assert( wSource._accessor[0]._value.length == 3 );
     assert( wSource._accessor[0]._value == [0,1,2] );
     assert( wSource._accessor[8]._value.length == 3 );
     assert( wSource._accessor[8]._value == [24,25,26] );
-    
+
     Triangles tri;
     tri.load( q{
         <triangles count="3" material="Symbol">
@@ -817,16 +817,16 @@ unittest
           <p> 5 8 3 1 7 4 0 6 2 </p>
         </triangles>
     }.readDocument.getChildren[0] );
-    
+
     WrappedSource!(float)[] wSources;
     wSources ~= wSource;
-    
+
     auto wTri = tri.wrapTriangles!float( wSources );
     assert( wTri._inputs.length == 1 );
 //    assert( wTri._inputs[0]._init == [15,16,17, 24,25,26,  9,10,11,
 //                                       3, 4, 5, 21,22,23, 12,13,14,
 //                                       0, 1, 2, 18,19,20,  6, 7, 8 ] );
-    
+
     Source names;
     names.load( q{
         <source id="Joint">
@@ -838,12 +838,12 @@ unittest
           </technique_common>
         </source>
     }.readDocument.getChildren[0] );
-    
+
     auto wNames = names.wrapSource!string;
     assert( wNames._accessor.length == 5 );
     assert( wNames._accessor[0]._value == [ "Bone0" ] );
     assert( wNames._accessor[4]._value == [ "Bone4" ] );
-    
+
     Source weights;
     weights.load( q{
         <source id="Weight">
@@ -855,7 +855,7 @@ unittest
           </technique_common>
         </source>
     }.readDocument.getChildren[0] );
-    
+
     auto wWeights = weights.wrapSource!float;
     assert( wWeights._accessor.length == 2 );
     assert( wWeights._accessor[0]._value == [ 1.000000 ] );
@@ -870,7 +870,7 @@ unittest
           <v>0 0 1 0 2 0 3 0 4 0 0 0 1 0 2 0 3 1 4 1</v>
         </vertex_weights>
     }.readDocument.getChildren[0] );
-    
+
     auto wVWs = vws.wrapVertexWeights;
     assert( wVWs._values.length == 9 );
     assert( wVWs._values[0].length == 1 );
@@ -878,7 +878,7 @@ unittest
     assert( wVWs._values[8].length == 2 );
     assert( wVWs._values[8][0] == [3,1] );
     assert( wVWs._values[8][1] == [4,1] );
-    
+
 }
 
 struct WrappedSkin
@@ -893,29 +893,29 @@ struct WrappedSkin
         float[] matrix;
         VW[] vws;
     }
-    
+
     Skin _self;
-    
+
     string source;
     Result[string] result;
 
     this( Skin skin, WrappedGeometry* geometry )
     {
         assert( skin.source[1..$] == (*geometry).id );
-        
+
         _self = skin;
-        
+
         source = skin.source;
 
         //Name Source
         auto ns = filter!( (a) => a.type == ARRAYTYPE.NAME )( skin.sources[] ).array;
         assert( ns.length == 1 );
-        
+
         //Name WrappedSource
         auto nws = WrappedSource!string( ns[0] );
         //Float WrappedSources
         auto fwss = map!( (a) => wrapSource!float(a) )( filter!( (b) => b.type != ARRAYTYPE.NAME )( skin.sources[] ) );
-        
+
         //joints
         //Joint Joints Input
         auto jji = array( filter!( (a) => a.semantic == SEMANTICTYPE.JOINT )( skin.joints.inputs[] ) )[0];
@@ -924,10 +924,10 @@ struct WrappedSkin
         auto ii = array( filter!( (a) => a.semantic == SEMANTICTYPE.INV_BIND_MATRIX )( skin.joints.inputs[] ) )[0];
         //Inverse WrappedSource
         auto iws = array( filter!( (a) => a.id == ii.source[1..$] )( fwss ) )[0];
-        
+
         foreach( a, b; lockstep( nws._accessor, iws._accessor ) )
             result[ a._value[0] ] = Result( b._value, null );
-        
+
         //vertex_weights
         //Joint Vertex Input
         auto jvi = array( filter!( (a) => a.semantic == SEMANTICTYPE.JOINT )( skin.vertex_weights.inputs[] ) )[0];
@@ -936,20 +936,20 @@ struct WrappedSkin
         auto wi = array( filter!( (a) => a.semantic == SEMANTICTYPE.WEIGHT )( skin.vertex_weights.inputs[] ) )[0];
         //Weight WrappedSource
         auto wws = array( filter!( (a) => a.id == wi.source[1..$] )( fwss ) )[0];
-        
+
         //Wrapped Vertex_Weight
         auto wvw = skin.vertex_weights.wrapVertexWeights;
-        assert( wvw[].length == geometry.mesh._vertices._accessor.length );        
-        
+        assert( wvw[].length == geometry.mesh._vertices._accessor.length );
+
         int idx = 0;
         foreach( vw, ref param; lockstep( wvw[], geometry.mesh._vertices._accessor ) )
         {
             foreach( v; vw )
                 result[ nws._accessor[v[0]]._value[0] ].vws ~= VW( idx, wws._accessor[v[1]]._value[0] );
-            
+
             ++idx;
         }
-        
+
         foreach( key, value; result )
             writefln( "Skin.Result[%s].vws.length = %d", key, value.vws.length );
 
@@ -964,14 +964,14 @@ auto wrapSkin( Skin skin, WrappedGeometry* geometry )
 struct WrappedController
 {
     Controller _self;
-    
+
     string id;
     WrappedSkin skin;
-    
+
     this( Controller controller, WrappedGeometry* geometry )
     {
         _self = controller;
-        
+
         id = controller.id;
         skin = controller.skin.wrapSkin( geometry );
     }
@@ -985,14 +985,14 @@ auto wrapController( Controller controller, WrappedGeometry* geometry )
 struct WrappedControllers
 {
     LibraryControllers _self;
-    
+
     WrappedController[] _controllers;
     alias _controllers this;
-    
+
     this( LibraryControllers controllers, WrappedGeometry* geometry )
     {
         _self = controllers;
-        
+
         _controllers = array( map!( (a) => a.wrapController( geometry ) )( _self.controllers ) );
     }
 }
@@ -1012,9 +1012,9 @@ struct WrappedAnimation
     }
 
     Animation _self;
-    
+
     KeyFrame[] _values;
-    
+
     string target;
 
     float[16] transpose( float[] matrix )
@@ -1026,21 +1026,21 @@ struct WrappedAnimation
                  matrix[3], matrix[7], matrix[11], matrix[15] ];
     }
 
-    
+
     this( Animation animation )
     {
         _self = animation;
-        
+
         target = _self.channels[0].target.split("/")[0];
-        
+
         auto tws = _self.sources.filter!( (a) => a.id.split("-")[2] == "Time" ).array[0].wrapSource!(float);
         auto pws = _self.sources.filter!( (a) => a.id.split("-")[2] == "Pose" ).array[0].wrapSource!(float);
         auto iws = _self.sources.filter!( (a) => a.id.split("-")[2] == "Interpolation" ).array[0].wrapSource!(string);
-        
+
         assert( tws._accessor.length == pws._accessor.length );
         assert( pws._accessor.length == iws._accessor.length );
         assert( iws._accessor.length == tws._accessor.length );
-        
+
         foreach( time, pose, interpolation; lockstep( tws._accessor, pws._accessor, iws._accessor ) )
         {
             KeyFrame keyframe;
@@ -1052,7 +1052,7 @@ struct WrappedAnimation
 
             _values ~= keyframe;
         }
-        
+
         writefln( "Animation [%s] loaded!", _self.id );
     }
 
@@ -1066,17 +1066,17 @@ auto wrapAnimation( Animation animation )
 struct WrappedAnimations
 {
     LibraryAnimations _self;
-    
+
     WrappedAnimation[] animations;
-    
+
     this( LibraryAnimations libAnimations )
     {
         writeln( "Animations loading..." );
-        
+
         _self = libAnimations;
-        
+
         animations = array( map!( (a) => a.wrapAnimation() )( _self.animations ) );
-        
+
         writeln( "done!" );
     }
 
@@ -1092,19 +1092,19 @@ enum Step { NEXT, PREV };
 struct WrappedBone
 {
     WrappedBone*  parent;
-    Node          _self; 
+    Node          _self;
     WrappedBone[] children;
-    
+
     string id;
     mat4 matrix = mat4.identity;
     mat4 pose   = mat4.identity;
-    
+
     //アニメーション計算用
     WrappedAnimation.KeyFrame[] keyframes;
     bool hasAnimation = false;
     uint startIndex = -1;
     uint endIndex = -1;
-    
+
     //IK計算用
     bool isIK = false;
     WrappedBone* IKTarget;
@@ -1122,14 +1122,14 @@ struct WrappedBone
         assert( m.length == 16 );
         return mat4( m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15] );
     }
-    
+
     //constructor内で childに親情報として &thisを渡そうと思ったが
     //アドレスが何処かで置き換えられるらしく正常な参照先を渡せないので
     //その処理か下記の connectKeyFramesで合わせて行う。
     this( Node node )
     {
         _self = node;
-        
+
         id = node.id;
 
         assert( node.matrixes.length == 1 );
@@ -1139,7 +1139,7 @@ struct WrappedBone
         //pose.transpose;
 
         writefln( "Bone [%s] loaded!", _self.id );
-        
+
         foreach( child; node.nodes )
             children ~= child.wrapBone;
     }
@@ -1155,45 +1155,45 @@ struct WrappedBone
             assert( keyframes.length >= 2 );
             startIndex = 0;
             endIndex = 1;
-            
+
             writefln( "Bone [%s] keyframes connected!", _self.id );
             break;
         }
-        
+
         foreach( ref child; children )
         {
             child.parent = &this;
             child.connectKeyFrames( animations );
         }
     }
-    
+
     void connectVertexWeights( WrappedSource!(float)* source, WrappedController* controller )
     {
         if( _self.id in controller.skin.result )
         {
             auto result = controller.skin.result[ _self.id ];
             matrix = toMat4( result.matrix );
-            
+
             // OpenGL
             //matrix.transpose;
 
             foreach( vw; result.vws )
                 source._accessor[ vw.index ]._bwRefs ~= WrappedSource!float.BW( &this, vw.weight );
-            
+
             writefln( "Bone [%s] vertex weights connected!", _self.id );
         }
         else
         {
             writefln( "%s's skin not found.", _self.id );
         }
-        
+
         foreach( ref child; children )
             child.connectVertexWeights( source, controller );
     }
 
     void calcPose( Step step, ref const float time )
     {
-        
+
         if( hasAnimation )
         {
 
@@ -1228,7 +1228,7 @@ struct WrappedBone
 
             auto s = &(keyframes[startIndex]);
             auto e = &(keyframes[endIndex]);
-            
+
             if( s.pose != e.pose )
             {
                 float t = time - s.time;
@@ -1236,7 +1236,7 @@ struct WrappedBone
 
                 mat4 sm = toMat4( s.pose );
                 mat4 em = toMat4( e.pose );
-                
+
                 quat sq = quat.from_matrix( sm.rotation );
                 //if( sq.w < 0.0 ) sq.invert;
                 quat eq = quat.from_matrix( em.rotation );
@@ -1268,7 +1268,7 @@ struct WrappedBone
                                             lerp( st[2][3], et[2][3], t ) );
                 pose.translation( ct );
 
-/+                
+/+
                 if( ( id == "左足IK" ) || ( id == "右足IK" ) )
                 {
                     writeln( "----- id : ", id, " -----" );
@@ -1282,22 +1282,22 @@ struct WrappedBone
                     writeln( "" );
                 }
 +/
-                
+
             }
             else
                 pose = toMat4( s.pose );
-                
+
         }
-        
+
         //if( parent == null )
         //    pp = pose;
         //else
         //    pp = pose * parent.pp;
-        
+
         //foreach( ref child; taskPool.parallel( children ) )
         foreach( ref child; children )
             child.calcPose( step, time );
-            
+
     }
 
     void calcIK()
@@ -1309,22 +1309,22 @@ struct WrappedBone
             {
                 auto effector = &(IKTarget.children[0]);
                 auto joint = effector.parent;
-                
+
                 for( int j = 0; j < IKChain; ++j )
                 {
 
                     vec3 before = getVertex( effector );
                     before -= getVertex( joint );
-                    
+
                     vec3 after = getVertex( &this );
                     after -= getVertex( joint );
 
                     //mat3 inv = joint.pose.rotation;
                     //inv.invert;
-                    
+
                     //before = before * inv;
                     //after  = after * inv;
-                    
+
                     before.normalize;
                     after.normalize;
 
@@ -1380,7 +1380,7 @@ struct WrappedBone
                         joint.pose.rotation( (q2 * q1).to_matrix!(3,3) );
 
                     }
-                    
+
 /+
                     if( (joint.id == "左ひざ") || (joint.id == "右ひざ") )
                     {
@@ -1395,20 +1395,20 @@ struct WrappedBone
                         {
                             Vector3 euler1 = q1.toEuler;
                             Vector3 euler2 = joint.pose.getTransform.toQuaternion.toEuler;
-                            
+
                             if( euler1[2] + euler2[2] > PI )
                                 euler1[2] = PI - euler2[2];
-                                
+
                             if( euler1[2] + euler2[2] < 0.002f )
                                 euler1[2] = 0.002f - euler2[2];
-                                
+
                             if( euler1[2] > IKWeight )
                                 euler1[2] = IKWeight;
                             else if( euler1[2] < -IKWeight )
                                 euler1[2] = -IKWeight;
-                                                
+
                             q1 = makeQuaternion( 0.0, 0.0, euler1[2] );
-                        
+
                         }
                     }
 +/
@@ -1435,7 +1435,7 @@ struct WrappedNode
     {
         WrappedTriangles!(float)* triangles;
         WrappedMaterial*          material;
-        
+
         void load( bool enableTexture )
         {
             material.load( enableTexture );
@@ -1455,9 +1455,9 @@ struct WrappedNode
     this( Node node, WrappedGeometry* geometry, WrappedMaterials* materials )
     {
         writeln( "Nodes loading..." );
-        
+
         _self = node;
-        
+
         translates = _self.translates;
         rotates    = _self.rotates;
         scales     = _self.scales;
@@ -1468,7 +1468,7 @@ struct WrappedNode
                                    &(array( filter!( (ref b) => b.id == ins.target[1..$] )( (*materials)[]) )[0] ) );
             writefln( "Instance [%s] loaded!", ins.symbol );
         }
-        
+
         writeln( "done!" );
     }
 
@@ -1476,13 +1476,13 @@ struct WrappedNode
     {
         foreach( ref translate; translates )
             glTranslatef( translate[0], translate[1], translate[2] );
-            
+
         foreach( ref rotate; rotates )
             glRotatef( rotate[3], rotate[0], rotate[1], rotate[2] );
-            
+
         foreach( ref scale; scales )
             glScalef( scale[0], scale[1], scale[2] );
-            
+
         foreach( ref instance; instances )
             instance.load( enableTexture );
     }
@@ -1502,23 +1502,23 @@ struct IKConfig
         assert( exists( filePath ) );
         self = readText( filePath ).readDocument.getChildren[1];
     }
-    
+
     void set( WrappedBone* bone )
     {
         WrappedBone* findBone( WrappedBone* _bone, string name )
         {
             if( name == _bone.id )
                 return _bone;
-            
+
             foreach( ref child; _bone.children )
             {
                 WrappedBone* temp = findBone( &child, name );
                 if( temp != null ) return temp;
             }
-            
+
             return null;
         }
-    
+
         foreach( ik; self.getElements )
         {
             auto attrs = ik.getAttributes;
@@ -1527,7 +1527,7 @@ struct IKConfig
             auto ikEffect = findBone( bone, attrs["target"] );
             assert( ikEffect != null );
             ikEffect.isIK = true;
-            
+
             assert( "name" in attrs );
             ikEffect.IKTarget = findBone( bone, attrs["name"] );
             assert( ikEffect.IKTarget != null );
@@ -1575,10 +1575,10 @@ struct ColladaModel
         geometries = _self.libGeometries.wrapGeometries;
         controllers = _self.libControllers.wrapControllers( &(geometries[0]) );
         animations ~= _self.libAnimations.wrapAnimations;
-        
+
         bone = _self.libVisualScenes.visualScenes[0].nodes[0].wrapBone();
         bone.connectVertexWeights( geometries[0].mesh._vertices, &(controllers[0]) );
-        
+
         node = _self.libVisualScenes.visualScenes[0].nodes[1].wrapNode( &(geometries[0]), &materials );
 
         string conf = stripExtension( modelPath ) ~ "_ik.config";
@@ -1602,9 +1602,9 @@ struct ColladaModel
     {
         writeln( "selected Animation" );
         assert( number < animations.length );
-        
+
         bone.connectKeyFrames( &( animations[number] ) );
-        
+
         isMoving = true;
         startTime = glfwGetTime();
         currentTime = 0.0;
@@ -1618,7 +1618,7 @@ struct ColladaModel
         isMoving = false;
         __interval = glfwGetTime();
     }
-    
+
     void resume()
     {
         if( isMoving ) return;
@@ -1630,7 +1630,7 @@ struct ColladaModel
         startTime += __interval;
         __interval = 0.0;
     }
-    
+
     void moveStep( Step step, float time )
     {
         if( isMoving ) return;
@@ -1644,8 +1644,8 @@ struct ColladaModel
                 bone.calcIK();
             } break;
 
-            case Step.PREV : 
-            { 
+            case Step.PREV :
+            {
                 currentTime -= time;
                 bone.calcPose( Step.PREV, currentTime );
                 bone.calcIK();
@@ -1658,50 +1658,50 @@ struct ColladaModel
     void move()
     {
         if( !isMoving ) return;
-        
+
         currentTime = glfwGetTime() - startTime;
         bone.calcPose( Step.NEXT, currentTime );
         bone.calcIK();
         geometries[0].mesh._vertices.calc();
-        
+
     }
 
     void draw()
     {
-        
+
         if( enableTexture )
         {
             glEnable( GL_LINE_SMOOTH );
             glEnable( GL_TEXTURE_2D );
             glEnable( GL_BLEND );
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
+
             glPushMatrix();
                 node.load( true );
             glPopMatrix();
-            
+
             glDisable( GL_BLEND );
             glDisable( GL_TEXTURE_2D );
             glDisable( GL_LINE_SMOOTH );
         }
         else
-        {            
+        {
             glPushMatrix();
                 node.load( false );
             glPopMatrix();
         }
 
         if( enableBone ) drawBone();
-        
+
     }
-    
+
     void drawBone()
     {
         void makeBone( WrappedBone current, vec3 pv, int depth = 0 )
         {
-            
+
             vec3 cv = getVertex( &current );
-            
+
             if( ( current.id == "右足ＩＫ" ) || ( current.id == "右つま先ＩＫ") )
                 glColor3f( 0, 1, 0 );
 
@@ -1711,7 +1711,7 @@ struct ColladaModel
 
             if( ( current.id == "左足ＩＫ" ) || ( current.id == "左つま先ＩＫ") )
                 glColor3f( 1, 0, 0 );
-            
+
             if( ( current.id == "左足首先" ) || ( current.id == "左足首" ) ||
                 ( current.id == "左ひざ" ) || ( current.id == "左足" ) )
                 glColor3f( 1, 0, 1 );
@@ -1719,7 +1719,7 @@ struct ColladaModel
             glBegin( GL_POINTS );
             glVertex3f( cv.x, cv.y, cv.z );
             glEnd();
-            
+
             glBegin( GL_LINES );
             glVertex3f( pv.x, pv.y, pv.z );
             glVertex3f( cv.x, cv.y, cv.z );
@@ -1727,7 +1727,7 @@ struct ColladaModel
 
             glColor3f( 0.8, 0.8, 0.8 );
 /+
-            if( ( current.id == "左ひざ" ) || ( current.id == "左足" ) || 
+            if( ( current.id == "左ひざ" ) || ( current.id == "左足" ) ||
                 ( current.id == "右ひざ" ) || ( current.id == "右足" ) )
             {
                 float[4] cv_;
@@ -1735,24 +1735,24 @@ struct ColladaModel
                 cv_[1] = current.matrix[13] == 0.0 ? 0.0 : -current.matrix[13];
                 cv_[2] = current.matrix[14] == 0.0 ? 0.0 : -current.matrix[14];
                 cv_[3] = 1.0;
-                
+
                 float[4] cvx = cv_.dup;
                 cvx[0] += 1.0;
                 float[4] cvy = cv_.dup;
                 cvy[1] += 1.0;
                 float[4] cvz = cv_.dup;
                 cvz[2] += 1.0;
-                
+
                 multr( cv_, current.matrix );
                 multr( cvx, current.matrix );
                 multr( cvy, current.matrix );
                 multr( cvz, current.matrix );
-                
+
                 multr( cv_, current.pose );
                 multr( cvx, current.pose );
                 multr( cvy, current.pose );
                 multr( cvz, current.pose );
-                
+
                 auto _p = current.parent;
                 while( _p != null )
                 {
@@ -1762,7 +1762,7 @@ struct ColladaModel
                     multr( cvz, _p.pose );
                     _p = _p.parent;
                 }
-            
+
                 glBegin( GL_POINTS );
                 glColor3f( 1, 0, 0 );
                 glVertex3f( cvx[0], cvx[1], cvx[2] );
@@ -1771,7 +1771,7 @@ struct ColladaModel
                 glColor3f( 0, 0, 1 );
                 glVertex3f( cvz[0], cvz[1], cvz[2] );
                 glEnd();
-                
+
                 glBegin( GL_LINES );
                 glColor3f( 1, 0, 0 );
                 glVertex3f( cv_[0], cv_[1], cv_[2] );
@@ -1782,8 +1782,8 @@ struct ColladaModel
                 glColor3f( 0, 0, 1 );
                 glVertex3f( cv_[0], cv_[1], cv_[2] );
                 glVertex3f( cvz[0], cvz[1], cvz[2] );
-                glEnd();    
-                
+                glEnd();
+
                 glColor3f( 0.8, 0.8, 0.8 );
             }
 +/
@@ -1792,21 +1792,21 @@ struct ColladaModel
             foreach( child; current.children )
                 makeBone( child, cv, depth+1 );
         }
-        
+
         glDisable(GL_DEPTH_TEST);
-        
+
         glPushMatrix();
             glEnable(GL_LINE_SMOOTH);
             glLineWidth(2);
             glPointSize(8);
-            glColor3f( 0.8, 0.8, 0.8 );        
+            glColor3f( 0.8, 0.8, 0.8 );
             makeBone( bone, vec3( 0.0, 0.0, 0.0 ) );
-            glColor3f( 1, 1, 1 );        
+            glColor3f( 1, 1, 1 );
             glPointSize(1);
             glLineWidth(1);
             glDisable(GL_LINE_SMOOTH);
         glPopMatrix();
-        
+
         glEnable(GL_DEPTH_TEST);
     }
 }
