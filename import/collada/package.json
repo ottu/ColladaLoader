@@ -1,0 +1,19 @@
+{
+	"name": "collada",
+	"description": "OpenCollada Library.",
+	"copyright": "Copyright © 2014, ottu",
+	"authors": ["ottu"],
+    "license":"MIT",
+    "dependencies": {
+        "derelict":"~master",
+        "gl3n":"~master",
+        "kxml":"~master"
+	},
+    "importPaths":[
+        "import/"
+    ],
+    "sourcePaths":[
+        "import/"
+    ],
+    "targetPath":"lib"
+}
