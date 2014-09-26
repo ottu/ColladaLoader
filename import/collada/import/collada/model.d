@@ -1237,9 +1237,9 @@ struct WrappedBone
                 mat4 sm = toMat4( s.pose );
                 mat4 em = toMat4( e.pose );
 
-                quat sq = quat.from_matrix( sm.rotation );
+                quat sq = quat.from_matrix( sm.get_rotation );
                 //if( sq.w < 0.0 ) sq.invert;
-                quat eq = quat.from_matrix( em.rotation );
+                quat eq = quat.from_matrix( em.get_rotation );
                 //if( eq.w < 0.0 ) eq.invert;
 
                 if( eq.x < 0.0 ) {
@@ -1258,15 +1258,15 @@ struct WrappedBone
                     if( sq.z == -1 ) sq.z = 1;
                 }
 
-                pose.rotation( slerp( sq, eq, t ).to_matrix!(3,3) );
+                pose.set_rotation( slerp( sq, eq, t ).to_matrix!(3,3) );
 
-                mat4 st = sm.translation;
-                mat4 et = em.translation;
+                mat4 st = sm.get_translation;
+                mat4 et = em.get_translation;
 
                 mat4 ct = mat4.translation( lerp( st[0][3], et[0][3], t ),
                                             lerp( st[1][3], et[1][3], t ),
                                             lerp( st[2][3], et[2][3], t ) );
-                pose.translation( ct );
+                pose.set_translation( ct );
 
 /+
                 if( ( id == "左足IK" ) || ( id == "右足IK" ) )
@@ -1319,7 +1319,7 @@ struct WrappedBone
                     vec3 after = getVertex( &this );
                     after -= getVertex( joint );
 
-                    //mat3 inv = joint.pose.rotation;
+                    //mat3 inv = joint.pose.get_rotation;
                     //inv.invert;
 
                     //before = before * inv;
@@ -1341,12 +1341,12 @@ struct WrappedBone
 
                         //quat q = quat.axis_rotation( angle, axis );
                         //mat3 qm = q.to_matrix!(3,3);
-                        //mat3 jm = joint.pose.rotation;
+                        //mat3 jm = joint.pose.get_rotation;
 
-                        //joint.pose.rotation( jm * qm );
+                        //joint.pose.set_rotation( jm * qm );
 
                         quat q1 = quat.axis_rotation( angle, axis );
-                        quat q2 = quat.from_matrix( joint.pose.rotation );
+                        quat q2 = quat.from_matrix( joint.pose.get_rotation );
 /+
                         if( ( joint.id == "左ひざ" ) || ( joint.id == "右ひざ" ) )
                         {
@@ -1377,7 +1377,7 @@ struct WrappedBone
                             }
                         }
 +/
-                        joint.pose.rotation( (q2 * q1).to_matrix!(3,3) );
+                        joint.pose.set_rotation( (q2 * q1).to_matrix!(3,3) );
 
                     }
 
