@@ -51,7 +51,7 @@ struct Image
             {
                 case "id"   : { id   = value; } break;
                 case "name" : { name = value; } break;
-                default     : { throw new Exception("Image attribute switch fault."); } break;
+                default     : { throw new Exception("Image attribute switch fault."); }
             }
         }
 
@@ -99,7 +99,7 @@ struct LibraryImages
             {
                 case "id"   : { id = value; } break;
                 case "name" : { name = value; } break;
-                default : { throw new Exception("LibraryImages attribute switch fault"); } break;
+                default : { throw new Exception("LibraryImages attribute switch fault"); }
             }
         }
 

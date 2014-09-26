@@ -104,11 +104,11 @@ struct Param
                         case "int"   : { type = ARRAYTYPE.INT;  } break;
                         case "float" :
                         case "float4x4" : { type = ARRAYTYPE.FLOAT; } break;
-                        default : { throw new Exception( "Param type switch faild." ); } break;
+                        default : { throw new Exception( "Param type switch faild." ); }
                     }
                 } break;
                 case "semantic" : { semantic = value; } break;
-                default : { throw new Exception( "Param attribute switch faild." ); } break;
+                default : { throw new Exception( "Param attribute switch faild." ); }
             }
         }
     }
@@ -430,13 +430,13 @@ struct Input(INPUTTYPE type)
                         case "UV"              : { semantic = SEMANTICTYPE.UV; } break;
                         case "VERTEX"          : { semantic = SEMANTICTYPE.VERTEX; } break;
                         case "WEIGHT"          : { semantic = SEMANTICTYPE.WEIGHT; } break;
-                        default : { throw new Exception( "Input semantic switch [" ~ value ~ "] failed." ); } break;
+                        default : { throw new Exception( "Input semantic switch [" ~ value ~ "] failed." ); }
                     }
                 } break;
 
                 case "source" : { source   = value; } break;
 
-                default : { throw new Exception( "Input element switch failed." ); } break;
+                default : { throw new Exception( "Input element switch failed." ); }
             }
         }
     }

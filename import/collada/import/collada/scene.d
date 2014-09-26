@@ -77,12 +77,12 @@ struct Node
                     {
                         case "NODE"  : { type = NODETYPE.NODE;  } break;
                         case "JOINT" : { type = NODETYPE.JOINT; } break;
-                        default : { throw new Exception("Node type switch failed."); } break;
+                        default : { throw new Exception("Node type switch failed."); }
                     }
                 } break;
 
                 //case "layer" : {} break;
-                default : { throw new Exception("Node attribute switch failed."); } break;
+                default : { throw new Exception("Node attribute switch failed."); }
             }
         }
 

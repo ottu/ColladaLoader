@@ -105,7 +105,7 @@ struct Texture
             {
                 case "texture"  : { texture  = value; } break;
                 case "texcoord" : { texcoord = value; } break;
-                default : { throw new Exception("Texture(base) attribure switch faild." ); } break;
+                default : { throw new Exception("Texture(base) attribure switch faild." ); }
             }
         }
     }

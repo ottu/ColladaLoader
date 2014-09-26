@@ -530,7 +530,7 @@ struct Effect
             {
                 case "id"   : { id = value; } break;
                 case "name" : { name = value; } break;
-                default : { throw new Exception("Element attribute switch fault."); } break;
+                default : { throw new Exception("Element attribute switch fault."); }
             }
         }
 
@@ -585,7 +585,7 @@ struct LibraryEffects
             {
                 case "id"   : { id = value; } break;
                 case "name" : { name = value; } break;
-                default : { throw new Exception("LibraryEffects attribute switch fault."); } break;
+                default : { throw new Exception("LibraryEffects attribute switch fault."); }
             }
         }
 

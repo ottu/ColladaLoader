@@ -33,7 +33,7 @@ struct Channel
             {
                 case "source" : { source = value; } break;
                 case "target" : { target = value; } break;
-                default : { throw new Exception( "Channel attribute switch failed." ); } break;
+                default : { throw new Exception( "Channel attribute switch failed." ); }
             }
         }
     }
@@ -122,7 +122,7 @@ struct Animation
             {
                 case "id" : { id = value; } break;
                 case "name" : { name = value; } break;
-                default : { throw new Exception( "Animation attribute switch failed." ); } break;
+                default : { throw new Exception( "Animation attribute switch failed." ); }
             }
         }
 
@@ -194,7 +194,7 @@ struct LibraryAnimations
             {
                 case "id" : { id = value; } break;
                 case "name" : { name = value; } break;
-                default : { throw new Exception( "LibraryAnimations attribute switch failed." ); } break;
+                default : { throw new Exception( "LibraryAnimations attribute switch failed." ); }
             }
         }
 

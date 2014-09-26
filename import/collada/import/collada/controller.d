@@ -221,7 +221,7 @@ struct Controller
             {
                 case "id"   : { id   = value; } break;
                 case "name" : { name = value; } break;
-                default     : { throw new Exception("Controller attribute switch fault."); } break;
+                default     : { throw new Exception("Controller attribute switch fault."); }
             }
         }
 
@@ -275,7 +275,7 @@ struct LibraryControllers
             {
                 case "id"   : { id = value; } break;
                 case "name" : { name = value; } break;
-                default : { throw new Exception("LibraryControllers attribute switch fault"); } break;
+                default : { throw new Exception("LibraryControllers attribute switch fault"); }
             }
         }
 
